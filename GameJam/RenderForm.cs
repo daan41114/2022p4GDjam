@@ -63,18 +63,18 @@ namespace GameJam
             };
             gc.enemy = new RenderObject()
             {
-                frames = gc.spriteMap.GetPlayerFrames(),
+                frames = gc.spriteMap.GetEnemyFrames(),
 
-                rectangle = new Rectangle(8 * gc.tileSize, 5 * gc.tileSize, gc.tileSize, gc.tileSize),
+                rectangle = new Rectangle(11 * gc.tileSize, 10 * gc.tileSize, gc.tileSize, gc.tileSize),
             };
         }
         public void ReplaceEnemy()
         {
             gc.enemy = new RenderObject()
             {
-                frames = gc.spriteMap.GetPlayerFrames(),
+                frames = gc.spriteMap.GetEnemyFrames(),
 
-                rectangle = new Rectangle(8 * gc.tileSize, 5 * gc.tileSize, gc.tileSize, gc.tileSize),
+                rectangle = new Rectangle(11 * gc.tileSize, 10 * gc.tileSize, gc.tileSize, gc.tileSize),
             };
         }
 
