@@ -16,7 +16,7 @@ namespace GameJam
         private LevelLoader levelLoader;
         private float frametime;
         private GameRenderer renderer;
-        private Audio audio;
+        //private Audio audio;
         private readonly GameContext gc = new GameContext();
         public RenderForm()
         {
@@ -35,7 +35,7 @@ namespace GameJam
         private void Form1_FormClosing(object sender, FormClosingEventArgs e)
         {
             renderer.Dispose();
-            audio.Dispose();
+            //audio.Dispose();
         }
         private void RenderForm_Load(object sender, EventArgs e)
         {
@@ -43,29 +43,39 @@ namespace GameJam
             levelLoader.LoadRooms(gc.spriteMap.GetMap());
 
             renderer = new GameRenderer(gc);
-
-            gc.room = levelLoader.GetRoom(0, 0);
-
-            gc.player = new RenderObject()
-            {
-                frames = gc.spriteMap.GetPlayerFrames(),
-                
-                rectangle = new Rectangle(2 * gc.tileSize, 2 * gc.tileSize, gc.tileSize, gc.tileSize),
-            };
-            gc.enemy = new RenderObject()
-            {
-                frames = gc.spriteMap.GetPlayerFrames(),
-                
-                rectangle = new Rectangle(2 * gc.tileSize, 2 * gc.tileSize, gc.tileSize, gc.tileSize),
-            };
-
-
+            Spawn();
             ClientSize =
              new Size(
 
                 (gc.tileSize * gc.room.tiles[0].Length) * gc.scaleunit,
                 (gc.tileSize * gc.room.tiles.Length) * gc.scaleunit
                 );
+        }
+        private void Spawn()
+        {
+            gc.room = levelLoader.GetRoom(0, 0);
+
+            gc.player = new RenderObject()
+            {
+                frames = gc.spriteMap.GetPlayerFrames(),
+
+                rectangle = new Rectangle(2 * gc.tileSize, 2 * gc.tileSize, gc.tileSize, gc.tileSize),
+            };
+            gc.enemy = new RenderObject()
+            {
+                frames = gc.spriteMap.GetPlayerFrames(),
+
+                rectangle = new Rectangle(8 * gc.tileSize, 5 * gc.tileSize, gc.tileSize, gc.tileSize),
+            };
+        }
+        public void ReplaceEnemy()
+        {
+            gc.enemy = new RenderObject()
+            {
+                frames = gc.spriteMap.GetPlayerFrames(),
+
+                rectangle = new Rectangle(8 * gc.tileSize, 5 * gc.tileSize, gc.tileSize, gc.tileSize),
+            };
         }
 
         private void RenderForm_KeyDown(object sender, KeyEventArgs e)
@@ -105,7 +115,7 @@ namespace GameJam
                 if (next.graphic == 'D')
                 {
                     gc.room = levelLoader.GetRoom(gc.room.roomx + x, gc.room.roomy + y);
-
+                    ReplaceEnemy();
                     if (y != 0)
                     {
                         player.rectangle.Y += -y * ((gc.room.tiles.Length - 2) * gc.tileSize);
