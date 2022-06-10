@@ -11,11 +11,13 @@ namespace GameJam.Game
 
         internal SpriteMap()
         {
-
-            tileMap.Add('#', new Rectangle(45, 75, 16, 16));
+            tileMap.Add('#', new Rectangle(373, 27, 16, 16));
+            tileMap.Add('$', new Rectangle(373, 42, 16, 16));
+            
             tileMap.Add('.', new Rectangle(23, 75, 16, 16));
             tileMap.Add('D', new Rectangle(2, 75, 16, 16));
             tileMap.Add('!', new Rectangle(66, 75, 16, 16));
+            tileMap.Add('-', new Rectangle(66, 75, 16, 16));
 
             playerAnimation = new Rectangle[]
                 {
@@ -34,6 +36,10 @@ namespace GameJam.Game
         {
             return playerAnimation;
         }
+        /*internal Rectangle[] GetMARIOFrames()
+        {
+            return weirdMovementUp;
+        }*/
     }
 
 }

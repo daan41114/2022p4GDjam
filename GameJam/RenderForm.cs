@@ -49,6 +49,13 @@ namespace GameJam
             gc.player = new RenderObject()
             {
                 frames = gc.spriteMap.GetPlayerFrames(),
+                
+                rectangle = new Rectangle(2 * gc.tileSize, 2 * gc.tileSize, gc.tileSize, gc.tileSize),
+            };
+            gc.enemy = new RenderObject()
+            {
+                frames = gc.spriteMap.GetPlayerFrames(),
+                
                 rectangle = new Rectangle(2 * gc.tileSize, 2 * gc.tileSize, gc.tileSize, gc.tileSize),
             };
 
@@ -63,21 +70,25 @@ namespace GameJam
 
         private void RenderForm_KeyDown(object sender, KeyEventArgs e)
         {
-            if (e.KeyCode == Keys.W)
+            if (e.KeyCode == Keys.W || e.KeyCode == Keys.Up)
             {
                 MovePlayer(0, -1);
+                MoveEnemy(0, 1);
             }
-            else if (e.KeyCode == Keys.S)
+            else if (e.KeyCode == Keys.S || e.KeyCode == Keys.Down)
             {
                 MovePlayer(0, 1);
+                MoveEnemy(0, -1);
             }
-            else if (e.KeyCode == Keys.A)
+            else if (e.KeyCode == Keys.A || e.KeyCode == Keys.Left)
             {
                 MovePlayer(-1, 0);
+                MoveEnemy(1, 0);
             }
-            else if (e.KeyCode == Keys.D)
+            else if (e.KeyCode == Keys.D || e.KeyCode == Keys.Right)
             {
                 MovePlayer(1, 0);
+                MoveEnemy(-1, 0);
             }
         }
 
@@ -102,6 +113,7 @@ namespace GameJam
                     else
                     {
                         player.rectangle.X += -x * ((gc.room.tiles[0].Length - 2) * gc.tileSize);
+
                     }
                 }
 
@@ -109,6 +121,38 @@ namespace GameJam
                 {
                     player.rectangle.X = newx;
                     player.rectangle.Y = newy;
+                }
+            }
+        }
+        private void MoveEnemy(int x, int y)
+        {
+            RenderObject enemy = gc.enemy;
+            float newx = enemy.rectangle.X + (x * gc.tileSize);
+            float newy = enemy.rectangle.Y + (y * gc.tileSize);
+
+            Tile next = gc.room.tiles.SelectMany(ty => ty.Where(tx => tx.rectangle.Contains((int)newx, (int)newy))).FirstOrDefault();
+
+            if (next != null)
+            {
+                if (next.graphic == 'D')
+                {
+                    gc.room = levelLoader.GetRoom(gc.room.roomx + x, gc.room.roomy + y);
+
+                    if (y != 0)
+                    {
+                        enemy.rectangle.Y += -y * ((gc.room.tiles.Length - 2) * gc.tileSize);
+                    }
+                    else
+                    {
+                        enemy.rectangle.X += -x * ((gc.room.tiles[0].Length - 2) * gc.tileSize);
+
+                    }
+                }
+
+                else if (next.graphic != '#')
+                {
+                    enemy.rectangle.X = newx;
+                    enemy.rectangle.Y = newy;
                 }
             }
         }
