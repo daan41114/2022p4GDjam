@@ -6,22 +6,23 @@ using System.Diagnostics;
 using System.Drawing;
 using System.Linq;
 using System.Windows.Forms;
+using System.Collections.Generic;
 
 namespace GameJam
 {
     public partial class RenderForm : Form
     {
 
-
         private LevelLoader levelLoader;
         private float frametime;
         private GameRenderer renderer;
+        private bool isAFuckingDoorYouPieceOfShit;
         //private Audio audio;
         private readonly GameContext gc = new GameContext();
         public RenderForm()
         {
             InitializeComponent();
-
+            isAFuckingDoorYouPieceOfShit = false;
             DoubleBuffered = true;
             ResizeRedraw = true;
 
@@ -41,7 +42,6 @@ namespace GameJam
         {
             levelLoader = new LevelLoader(gc.tileSize, new FileLevelDataSource());
             levelLoader.LoadRooms(gc.spriteMap.GetMap());
-
             renderer = new GameRenderer(gc);
             Spawn();
             ClientSize =
@@ -67,6 +67,7 @@ namespace GameJam
 
                 rectangle = new Rectangle(11 * gc.tileSize, 10 * gc.tileSize, gc.tileSize, gc.tileSize),
             };
+
         }
         public void ReplaceEnemy()
         {
@@ -109,7 +110,6 @@ namespace GameJam
             float newy = player.rectangle.Y + (y * gc.tileSize);
 
             Tile next = gc.room.tiles.SelectMany(ty => ty.Where(tx => tx.rectangle.Contains((int)newx, (int)newy))).FirstOrDefault();
-
             if (next != null)
             {
                 if (next.graphic == 'D')
@@ -127,7 +127,7 @@ namespace GameJam
                     }
                 }
 
-                else if (next.graphic != '#')
+                else if (next.graphic != '#' && next.graphic != '+')
                 {
                     player.rectangle.X = newx;
                     player.rectangle.Y = newy;
@@ -141,7 +141,6 @@ namespace GameJam
             float newy = enemy.rectangle.Y + (y * gc.tileSize);
 
             Tile next = gc.room.tiles.SelectMany(ty => ty.Where(tx => tx.rectangle.Contains((int)newx, (int)newy))).FirstOrDefault();
-
             if (next != null)
             {
                 if (next.graphic == 'D')
@@ -159,12 +158,41 @@ namespace GameJam
                     }
                 }
 
-                else if (next.graphic != '#')
+                    if (next.graphic != '#')
                 {
                     enemy.rectangle.X = newx;
                     enemy.rectangle.Y = newy;
+                    if (next.graphic == '$')
+                    {
+                        PlaceDoor();
+                    }
+                    else if (next.graphic != '$')
+                    {
+                        RemoveDoor();
+                    }
                 }
             }
+        }
+
+        private void PlaceDoor()
+        {
+
+            Tile door = gc.room.tiles.SelectMany(ty => ty.Where(tx => tx.rectangle.Contains((int)(13 * gc.tileSize), (int)(3 * gc.tileSize)))).FirstOrDefault();
+            if (isAFuckingDoorYouPieceOfShit) return;
+            Dictionary<char, Rectangle> map = gc.spriteMap.GetMap();
+            door.sprite = map['D'];
+            door.graphic = 'D';
+            isAFuckingDoorYouPieceOfShit = true;
+        }
+        private void RemoveDoor()
+        {
+
+            Tile door = gc.room.tiles.SelectMany(ty => ty.Where(tx => tx.rectangle.Contains((int)(13 * gc.tileSize), (int)(3 * gc.tileSize)))).FirstOrDefault();
+            if (!isAFuckingDoorYouPieceOfShit) return;
+            Dictionary<char, Rectangle> map = gc.spriteMap.GetMap();
+            door.sprite = map['+'];
+            door.graphic = '+';
+            isAFuckingDoorYouPieceOfShit = false;
         }
 
         public void Logic(float frametime)
