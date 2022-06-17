@@ -10,6 +10,7 @@ namespace GameJam.Game
         internal float animationSpeed = 10;
 
         internal Rectangle[] frames;
+        internal Rectangle[] enemyFrames;
 
         internal void MoveFrame(float frametime)
         {

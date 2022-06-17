@@ -14,7 +14,6 @@ namespace GameJam.Game
         public GameRenderer(GameContext context)
         {
             this.context = context;
-
             image = Bitmap.FromFile("sprites.png");
 
         }
@@ -32,13 +31,13 @@ namespace GameJam.Game
             g.Clear(Color.Black);
             return g;
         }
-        internal void Render(PaintEventArgs e, float frametime)
-        {
+        internal void Render(PaintEventArgs e,float frametime)
+        { 
             this.frametime = frametime;
-
             Graphics g = InitGraphics(e);
             RenderRoom(g);
             RenderObject(g, context.player);
+            RenderObject(g, context.enemy);
         }
 
         private void RenderRoom(Graphics g)
@@ -47,7 +46,7 @@ namespace GameJam.Game
             {
                 foreach (Tile t in row)
                 {
-                    g.DrawImage(image, t.rectangle, t.sprite, GraphicsUnit.Pixel);
+                    g.DrawImage(image,t.rectangle,t.sprite,GraphicsUnit.Pixel);
                 }
             }
         }
@@ -61,6 +60,7 @@ namespace GameJam.Game
         public void Dispose()
         {
             image.Dispose();
+            //imageEnemy.Dispose();
         }
     }
 
