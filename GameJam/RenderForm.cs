@@ -16,13 +16,13 @@ namespace GameJam
         private LevelLoader levelLoader;
         private float frametime;
         private GameRenderer renderer;
-        private SpriteMap spriteMap;
+        private bool isAFuckingDoorYouPieceOfShit;
         //private Audio audio;
         private readonly GameContext gc = new GameContext();
         public RenderForm()
         {
             InitializeComponent();
-
+            isAFuckingDoorYouPieceOfShit = false;
             DoubleBuffered = true;
             ResizeRedraw = true;
 
@@ -42,7 +42,6 @@ namespace GameJam
         {
             levelLoader = new LevelLoader(gc.tileSize, new FileLevelDataSource());
             levelLoader.LoadRooms(gc.spriteMap.GetMap());
-            spriteMap = new SpriteMap();
             renderer = new GameRenderer(gc);
             Spawn();
             ClientSize =
@@ -68,6 +67,7 @@ namespace GameJam
 
                 rectangle = new Rectangle(11 * gc.tileSize, 10 * gc.tileSize, gc.tileSize, gc.tileSize),
             };
+
         }
         public void ReplaceEnemy()
         {
@@ -110,7 +110,6 @@ namespace GameJam
             float newy = player.rectangle.Y + (y * gc.tileSize);
 
             Tile next = gc.room.tiles.SelectMany(ty => ty.Where(tx => tx.rectangle.Contains((int)newx, (int)newy))).FirstOrDefault();
-
             if (next != null)
             {
                 if (next.graphic == 'D')
@@ -142,7 +141,6 @@ namespace GameJam
             float newy = enemy.rectangle.Y + (y * gc.tileSize);
 
             Tile next = gc.room.tiles.SelectMany(ty => ty.Where(tx => tx.rectangle.Contains((int)newx, (int)newy))).FirstOrDefault();
-
             if (next != null)
             {
                 if (next.graphic == 'D')
@@ -160,24 +158,41 @@ namespace GameJam
                     }
                 }
 
-                if (next.graphic != '#')
+                    if (next.graphic != '#')
                 {
                     enemy.rectangle.X = newx;
                     enemy.rectangle.Y = newy;
-                }
-
-
-                else if (next.graphic != '$')
-                {
-                    Dictionary<char, Rectangle> map = gc.spriteMap.GetMap();
-                    //  = map['D'];
-                    //next.rectangle['+'] = map['D'];
-                }
-
-                else if (next.graphic == '$')
-                {
+                    if (next.graphic == '$')
+                    {
+                        PlaceDoor();
+                    }
+                    else if (next.graphic != '$')
+                    {
+                        RemoveDoor();
+                    }
                 }
             }
+        }
+
+        private void PlaceDoor()
+        {
+
+            Tile door = gc.room.tiles.SelectMany(ty => ty.Where(tx => tx.rectangle.Contains((int)(13 * gc.tileSize), (int)(3 * gc.tileSize)))).FirstOrDefault();
+            if (isAFuckingDoorYouPieceOfShit) return;
+            Dictionary<char, Rectangle> map = gc.spriteMap.GetMap();
+            door.sprite = map['D'];
+            door.graphic = 'D';
+            isAFuckingDoorYouPieceOfShit = true;
+        }
+        private void RemoveDoor()
+        {
+
+            Tile door = gc.room.tiles.SelectMany(ty => ty.Where(tx => tx.rectangle.Contains((int)(13 * gc.tileSize), (int)(3 * gc.tileSize)))).FirstOrDefault();
+            if (!isAFuckingDoorYouPieceOfShit) return;
+            Dictionary<char, Rectangle> map = gc.spriteMap.GetMap();
+            door.sprite = map['+'];
+            door.graphic = '+';
+            isAFuckingDoorYouPieceOfShit = false;
         }
 
         public void Logic(float frametime)
