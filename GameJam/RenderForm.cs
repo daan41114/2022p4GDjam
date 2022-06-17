@@ -6,16 +6,17 @@ using System.Diagnostics;
 using System.Drawing;
 using System.Linq;
 using System.Windows.Forms;
+using System.Collections.Generic;
 
 namespace GameJam
 {
     public partial class RenderForm : Form
     {
 
-
         private LevelLoader levelLoader;
         private float frametime;
         private GameRenderer renderer;
+        private SpriteMap spriteMap;
         //private Audio audio;
         private readonly GameContext gc = new GameContext();
         public RenderForm()
@@ -41,7 +42,7 @@ namespace GameJam
         {
             levelLoader = new LevelLoader(gc.tileSize, new FileLevelDataSource());
             levelLoader.LoadRooms(gc.spriteMap.GetMap());
-
+            spriteMap = new SpriteMap();
             renderer = new GameRenderer(gc);
             Spawn();
             ClientSize =
@@ -127,7 +128,7 @@ namespace GameJam
                     }
                 }
 
-                else if (next.graphic != '#')
+                else if (next.graphic != '#' && next.graphic != '+')
                 {
                     player.rectangle.X = newx;
                     player.rectangle.Y = newy;
@@ -159,10 +160,22 @@ namespace GameJam
                     }
                 }
 
-                else if (next.graphic != '#')
+                if (next.graphic != '#')
                 {
                     enemy.rectangle.X = newx;
                     enemy.rectangle.Y = newy;
+                }
+
+
+                else if (next.graphic != '$')
+                {
+                    Dictionary<char, Rectangle> map = gc.spriteMap.GetMap();
+                    //  = map['D'];
+                    //next.rectangle['+'] = map['D'];
+                }
+
+                else if (next.graphic == '$')
+                {
                 }
             }
         }
