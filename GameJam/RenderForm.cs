@@ -16,13 +16,13 @@ namespace GameJam
         private LevelLoader levelLoader;
         private float frametime;
         private GameRenderer renderer;
-        private bool isAFuckingDoorYouPieceOfShit;
+        private bool isADoor;
         //private Audio audio;
         private readonly GameContext gc = new GameContext();
         public RenderForm()
         {
             InitializeComponent();
-            isAFuckingDoorYouPieceOfShit = false;
+            isADoor = false;
             DoubleBuffered = true;
             ResizeRedraw = true;
 
@@ -178,21 +178,21 @@ namespace GameJam
         {
 
             Tile door = gc.room.tiles.SelectMany(ty => ty.Where(tx => tx.rectangle.Contains((int)(13 * gc.tileSize), (int)(3 * gc.tileSize)))).FirstOrDefault();
-            if (isAFuckingDoorYouPieceOfShit) return;
+            if (isADoor) return;
             Dictionary<char, Rectangle> map = gc.spriteMap.GetMap();
             door.sprite = map['D'];
             door.graphic = 'D';
-            isAFuckingDoorYouPieceOfShit = true;
+            isADoor = true;
         }
         private void RemoveDoor()
         {
 
             Tile door = gc.room.tiles.SelectMany(ty => ty.Where(tx => tx.rectangle.Contains((int)(13 * gc.tileSize), (int)(3 * gc.tileSize)))).FirstOrDefault();
-            if (!isAFuckingDoorYouPieceOfShit) return;
+            if (!isADoor) return;
             Dictionary<char, Rectangle> map = gc.spriteMap.GetMap();
             door.sprite = map['+'];
             door.graphic = '+';
-            isAFuckingDoorYouPieceOfShit = false;
+            isADoor = false;
         }
 
         public void Logic(float frametime)
